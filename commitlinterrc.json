@@ -1,0 +1,23 @@
+{
+    "lang": "en-US",
+    "types": {
+      "feat": "Commits, that adds or remove a new feature",
+      "build": "Commits, that affect build components like build tool, ci pipeline, dependencies, project version, ...",
+      "deps": "Update dependecy version or Add new dependecy or Remove outdated dependecy or Replace dependency or Update submodule",
+      "docs": "Commits, that affect documentation only",
+      "fix": "Commits, that fixes a bug",
+      "style": "Commits, that do not affect the meaning (white-space, formatting, missing semi-colons, etc)",
+      "refactor": "Commits, that rewrite/restructure your code, however does not change any API behaviour",
+      "test": "Commits, that add missing tests or correcting existing tests",
+      "perf": "Commits are special refactor commits, that improve performance",
+      "ci": "Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)",
+      "temp": "Add new feature or Fix bug in code or Save work in progress or Share changes for feedback",
+      "chore": "Miscellaneous commits e.g. modifying .gitignore",
+      "revert": "Reverts a previous commit."
+    },
+    "max-len": 5000,
+    "min-len": 1,
+    "example": "feat: add new feature like booking system",
+    "showInvalidHeader": true,
+    "debug": false
+}

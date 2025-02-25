@@ -1,0 +1,27 @@
+{
+  "branches": "main",
+  "repositoryUrl": "https://github.com/nordeck/ovc-videotest",
+  "debug": "false",
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+
+    ["@semantic-release/exec", {
+          "publishCmd": "echo RELEASE_VERSION=${nextRelease.version} >> $GITHUB_OUTPUT"
+        }],
+
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md",
+        "changelogTitle": "# Changelog"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["CHANGELOG.md"]
+      }
+    ]
+  ]
+}

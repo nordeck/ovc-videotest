@@ -1,0 +1,11 @@
+node_modules
+npm-debug.log
+build
+charts
+.dockerignore
+.env.local
+.env
+**/.git
+**/.DS_Store
+**/node_modules
+.idea

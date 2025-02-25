@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  videotest:
+    build:
+      context: .
+      args:
+        - REACT_APP_JITSI_FQDN
+        - REACT_APP_JWT_ENDPOINT_URL
+        - REACT_APP_DEBUG_JITSI_JWT
+    volumes:
+      - ./.env.js:/app/build/config/config.js
+    ports:
+      - "${VIDEOTEST_PORT:-8085}:3000"
