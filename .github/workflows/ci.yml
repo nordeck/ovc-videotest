@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - main
-      - "[0-9].x"
-      - "[0-9].[0-9]+.x"
-
-#permissions:
-#  contents: write
 
 env:
   DOCKER_IMAGE: ghcr.io/nordeck/ovc-videotest
