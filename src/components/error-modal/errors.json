@@ -1,0 +1,44 @@
+{
+    "AbortError" : {
+        "description" : "Obwohl der Benutzer und das Betriebssystem Zugriff auf das Hardwaregerät gewährt haben und keine Hardwareprobleme aufgetreten sind. Es ist ein Problem aufgetreten, das die Verwendung des Geräts verhindert hat.",
+        "solution" : "Bitte erlauben Sie in Ihren Browsereinstellungen den Zugriff auf Ihr Mikrofon und Ihre Videokamera und laden Sie dann die Seite neu.",
+        "name" : "Abbruchbenachrichtigung",
+        "code" : "AbortError"
+    },
+    "NotAllowedError" : {
+        "description" : "Wird ausgelöst, wenn eines oder mehrere der angeforderten Quellgeräte derzeit nicht verwendet werden können. Dies geschieht, wenn der Browserkontext unsicher ist (d. h. die Seite wurde über HTTP statt über HTTPS geladen). Der Benutzer hat den Zugriff für die aktuelle Sitzung verweigert oder der Benutzer hat den gesamten Zugriff auf Mediengeräte des Benutzers weltweit verweigert. In Browsern, die die Verwaltung von Medienberechtigungen mit der Berechtigungsrichtlinie unterstützen, Dieser Fehler wird zurückgegeben, wenn die Berechtigungsrichtlinie nicht so konfiguriert ist, dass sie den Zugriff auf die Eingabequelle(n) ermöglicht.",
+        "solution" : "Bitte erlauben Sie in Ihren Browsereinstellungen den Zugriff auf Ihr Mikrofon und Ihre Videokamera und laden Sie dann die Seite neu.",
+        "name" : "Abbruchbenachrichtigung",
+        "code" : "NotAllowedError"
+    },
+    "NotFoundError" : {
+        "description" : "Es wurden keine Medienspuren des angegebenen Typs gefunden, die die angegebene Einschränkung erfüllen.",
+        "solution" : "Bitte stellen Sie sicher, dass Ihr Mikrofon und Ihre Videokamera ordnungsgemäß angeschlossen sind, und laden Sie die Seite neu",
+        "name" : "Benachrichtigung „Nicht gefunden“",
+        "code" : "NotFoundError"
+    },
+    "OverconstrainedError" : {
+        "description" : "Keine Kandidatengeräte, die den angeforderten Kriterien entsprechen. Dieser Fehler kann auch dann auftreten, wenn der Benutzer noch keine Berechtigung zur Verwendung des zugrunde liegenden Geräts erteilt hat.",
+        "solution" : "Bitte erlauben Sie in Ihren Browsereinstellungen den Zugriff auf Ihr Mikrofon und Ihre Videokamera und laden Sie dann die Seite neu.",
+        "name" : "Überbeschränkte Benachrichtigung",
+        "code" : "OverconstrainedError"
+    },
+    "SecurityError" : {
+        "description" : "Die Unterstützung für Multimedia-Benutzerdaten ist deaktiviert. Der Mechanismus, mit dem die Medienunterstützung eines Benutzers aktiviert und deaktiviert wird, liegt im Ermessen des einzelnen Benutzeragenten.",
+        "solution" : "Bitte erlauben Sie in Ihren Browsereinstellungen den Zugriff auf Ihr Mikrofon und Ihre Videokamera und laden Sie dann die Seite neu.",
+        "name" : "Sicherheitsbenachrichtigung",
+        "code" : "SecurityError"
+    },
+    "NotReadableError" : {
+        "description" : "Ihre Webcam ist mit einer anderen Anwendung beschäftigt.",
+        "solution" : "Ihre Webcam ist mit einer anderen Anwendung beschäftigt. Bitte deaktivieren Sie Ihre Videokamera in einer anderen App und laden Sie diese Seite neu",
+        "name" : "Nicht lesbar",
+        "code" : "NotReadableError"
+    },
+    "OtherError" : {
+        "description" : "Nicht unterstützter Fehler. Bitte wenden Sie sich an Ihren Administrator",
+        "solution" : "Bitte wenden Sie sich an Ihren Systemadministrator oder versuchen Sie, im Internet eine Lösung für das Problem zu finden",
+        "name" : "Ein weiterer Fehler",
+        "code" : "OtherError"
+    }
+}
