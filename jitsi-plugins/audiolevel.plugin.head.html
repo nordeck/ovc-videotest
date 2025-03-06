@@ -1,0 +1,204 @@
+<!--
+ *  Copyright 2025 Nordeck IT + Consulting GmbH
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and  limitations
+ *  under the License.
+-->
+
+<!-- This plugin allows an iframe parent app to get the audio levels by listening to sendMessage events-->
+
+<script type="application/javascript">
+    (function () {
+
+        const LOG = 'VIDEOTEST';
+        console.log(`${LOG} html plugin loaded.`);
+
+        window.addEventListener('message', (event) => {
+            // TODO: check event.origin
+            const {data} = event || {};
+            if (!data) return;
+            if (data.type !== 'videotest' ) return;
+
+            mode = data.mode;
+
+            switch (mode) {
+                case 'local':
+                    APP.conference.muteAudio(false);
+                    APP.conference.muteVideo(false);
+                    break;
+                case 'remote':
+                    APP.conference.muteAudio(true);
+                    APP.conference.muteVideo(true);
+                    break;
+            }
+
+            resetMeters();
+        });
+
+        // utils declarations  -------------------------------------------------
+
+        let mode = '';
+        const cleanupSet = new Set();
+
+        const sendLvl = (device, type) => {
+            const {deviceId, jitsiTrack, label, local, participantId} = device;
+
+            // console.info(device);
+
+            function getCurrentMicDeviceId(state) {
+                return getDeviceIdByType(state, 'isAudioTrack');
+            }
+
+            function getDeviceIdByType(state, isType) {
+                const [ deviceId ] = state['features/base/tracks']
+                    .map(t => t.jitsiTrack)
+                    .filter(t => t && t?.isLocal() && t[isType]())
+                    .map(t => t.getDeviceId());
+
+                return deviceId || '';
+            }
+
+            const lvlChange = (lvl) => {
+                if (!mode) return;
+
+                const state = APP.store.getState();
+                const isActive = (deviceId) => {
+                    return deviceId === getCurrentMicDeviceId(state);
+                }
+
+                const payload = {
+                    type,
+                    mode,
+                    deviceId,
+                    label,
+                    lvl,
+                    local,
+                    participantId,
+                    active: isActive(deviceId)
+                };
+
+
+                window.parent.postMessage(payload, '*');
+            };
+
+            jitsiTrack.on('track.audioLevelsChanged', lvlChange);
+
+            cleanupSet.add(() => jitsiTrack.off('track.audioLevelsChanged', lvlChange));
+        }
+
+        const setupTracks = (iteration=0) => {
+            if (iteration > 10) return;
+            const tracks = APP.store.getState()['features/base/tracks'];
+            console.log(`${LOG} tracks`, tracks);
+
+            const audioTracks = tracks.filter((t) => t.mediaType === 'audio');
+
+            // keep trying until there's a track
+            if (audioTracks.length < 1) {
+                setTimeout(() => setupTracks(iteration+1), 5000);
+                return;
+            }
+
+            const levelAudioTracks = audioTracks.map((audioTrack, i) => {
+                const { jitsiTrack } = audioTrack;
+                console.log(`${LOG} audioTrack ${i}`, audioTrack);
+                return {
+                    deviceId: i,
+                    local: audioTrack.local,
+                    participantId: audioTrack.participantId,
+                    jitsiTrack,
+                    label: `[track ${i}] ${audioTrack.local ? 'Local' : 'Remote'}  track of participant [${audioTrack.participantId}]`
+                };
+            });
+
+            levelAudioTracks.forEach((track) => sendLvl(track, 'track'));
+        };
+
+        let micsState = '';
+
+        const setupDevices = () => {
+            if (micsState === 'working') return;
+
+            if (micsState !== 'ready') {
+                micsState = 'working';
+                getAudioInputDeviceData().then(devices => {
+                    devices.forEach(d => {
+                        sendLvl({...d, label: d.label}, 'device');
+                    });
+                    micsState = 'ready';
+                });
+                return;
+            }
+        };
+
+        const resetMeters = () => {
+            cleanupSet.forEach((f) => f());
+            cleanupSet.clear();
+
+            if (mode === 'local')  setupDevices();
+            if (mode === 'remote') setupTracks();
+        }
+
+        async function getAudioInputDeviceData() {
+            const state = APP.store.getState();
+            if (!state['features/base/devices'].availableDevices.audioInput) return [];
+            const microphoneDevices =  state['features/base/devices'].availableDevices.audioInput.map(
+                ({ deviceId, label }) => {
+                    return {
+                        deviceId,
+                        label
+                    };
+                });
+
+            const newAudioTracks = await createLocalAudioTracks(microphoneDevices, 5000);
+
+            return newAudioTracks;
+        }
+
+        function createLocalTrack(type, deviceId, timeout, additionalOptions) {
+            return (
+                JitsiMeetJS.createLocalTracks({
+                    cameraDeviceId: deviceId,
+                    devices: [ type ],
+
+                    //firefox_fake_device:
+                    //    window.config?.firefox_fake_device,
+                    micDeviceId: deviceId,
+                    timeout,
+                    ...additionalOptions
+                })
+                    .then(([ jitsiLocalTrack ]) => jitsiLocalTrack));
+        }
+
+        function createLocalAudioTracks(devices, timeout) {
+            return Promise.all(
+                devices.map(async ({ deviceId, label }) => {
+                    let jitsiTrack = null;
+                    let hasError = false;
+
+                    try {
+                        jitsiTrack = await createLocalTrack('audio', deviceId, timeout);
+                    } catch (err) {
+                        hasError = true;
+                    }
+
+                    return {
+                        deviceId,
+                        hasError,
+                        jitsiTrack,
+                        label
+                    };
+                }));
+        }
+
+    } () );
+</script>
